@@ -56,3 +56,10 @@ npm install @tyeps/lodash
 #### 作用
 
 lodash 是前端很实用的数组各种操作的工具包，第一次使用是在更新数据时，更新表中的单个属性的问题，和更新单个属性会用 null 覆盖其他属性的问题，
+
+## jsonwebtoken
+
+npm install jsonwebtoken@8.5.1
+npm install @types/jsonwebtoken@8.3.8 --save-dev
+
+#### 是用来根据制作的公私钥制作 token 令牌的

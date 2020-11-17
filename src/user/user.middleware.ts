@@ -1,22 +1,34 @@
 import { Request, Response, NextFunction } from 'express';
-import * as userService from './user.service';
 import bcrypt from 'bcrypt';
 
-/**
- * 验证用户数据
- */
-export const validateUserData = async (
+export const verifyCode = async (
   request: Request,
   response: Response,
   next: NextFunction,
 ) => {
-  console.log('验证用户数据');
-  const { name, password } = request.body;
-  if (!name) return next(new Error('NAME_IS_REQUIRED'));
-  if (!password) return next(new Error('PASSWORD_IS_REQUIRED'));
+  const { code } = request.body;
+  if (!code) {
+    return next(new Error('CODE_IS_REQUIRED'));
+  }
+  if (String(code).length !== 6) {
+    return next(new Error('CODE_FORMAT_IS_NOT_CORRECT'));
+  }
+  if (String(code) !== '888888') {
+    console.log(`code:::${code}`);
+    return next(new Error('CODE_IS_NOT_CORRECT'));
+  }
+  next();
+};
 
-  const user = await userService.getUserByName(name);
-  if (user) return next(new Error('USER_ALREADY_EXIST'));
+export const verifyPhone = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  const { phone } = request.body;
+  if (!phone) return new Error('PHONE_IS_REQUIRED');
+  if (String(phone).length !== 11)
+    return new Error('PHONE_FORMAT_IS_NOT_CORRECT');
   next();
 };
 
@@ -29,6 +41,7 @@ export const hashPassword = async (
   next: NextFunction,
 ) => {
   const { password } = request.body;
+  if (!password) return next(new Error('PASSWORD_IS_REQUIRED'));
   request.body.password = await bcrypt.hash(password, 10);
   next();
 };

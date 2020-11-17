@@ -24,12 +24,29 @@ export const defaultErrorHandler = (
   if (error.message) {
     console.log('服务错误信息：', error.message);
   }
-
+  console.log(`message:::${error.message}`);
   let statusCode: number, message: String;
   switch (error.message) {
-    case 'NAME_IS_REQUIRED':
+    case 'PHONE_IS_REQUIRED':
       statusCode = 400;
-      message = '用户名不能为空';
+      message = '手机号不能为空';
+      break;
+    case 'PHONE_FORMAT_IS_NOT_CORRECT':
+      statusCode = 400;
+      message = '手机号码格式不正确';
+      break;
+    case 'CODE_IS_REQUIRED':
+      statusCode = 400;
+      message = '验证码不能为空';
+      break;
+    case 'CODE_FORMAT_IS_NOT_CORRECT':
+      statusCode = 400;
+      message = '验证码格式不正确';
+      break;
+    case 'CODE_IS_NOT_CORRECT':
+      console.log('code不正确');
+      statusCode = 400;
+      message = '验证码不正确';
       break;
     case 'PASSWORD_IS_REQUIRED':
       statusCode = 400;

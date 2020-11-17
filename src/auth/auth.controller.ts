@@ -6,6 +6,6 @@ export const login = async (
   response: Response,
   next: NextFunction,
 ) => {
-  const { name, password } = request.body;
-  response.send({ message: `欢迎回来，${name}` });
+  const { phone } = request.body;
+  response.send({ message: `欢迎回来，${phone}` });
 };
