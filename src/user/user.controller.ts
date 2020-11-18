@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { ResponseModle } from '../app/Response.Model';
 import * as userService from './user.service';
+import { signToken } from '../auth/auth.service';
 import _ from 'lodash';
+import { format } from 'mysql2';
 
 export const sendPhoneCode = async (
   request: Request,
@@ -28,21 +30,28 @@ export const verifyCode = async (
   next: NextFunction,
 ) => {
   const { phone } = request.body;
-  var responseModel = new ResponseModle();
+  let responseModel = new ResponseModle();
   responseModel.code = 200;
   responseModel.message = 'succese';
-  const data = await userService.getUserByPhone(phone);
-  if (data) {
-    responseModel.data = { isExist: 1 };
+  const user = await userService.getUserByPhone(phone);
+  let isExist;
+  if (user) {
+    isExist = 1;
+    const { id } = user;
+    const payload = { id, phone };
+    const token = signToken({ payload });
+    responseModel.data = { isExist, id, phone, token };
+    response.send(responseModel);
   } else {
-    responseModel.data = { isExist: 0 };
+    isExist = 0;
+    responseModel.data = { isExist };
     await userService.creatUserService({
       name: phone,
       phone: phone,
       password: '',
     });
+    response.send(responseModel);
   }
-  response.send(responseModel);
 };
 
 export const updataUser = async (

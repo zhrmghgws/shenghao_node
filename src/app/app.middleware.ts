@@ -64,6 +64,14 @@ export const defaultErrorHandler = (
       statusCode = 400;
       message = '密码不正确';
       break;
+    case 'UNAUTHORIZED':
+      statusCode = 401;
+      message = '请先登录';
+      break;
+    case 'USER_DOES_NOT_OWN_RESOURCE':
+      statusCode = 400;
+      message = '您不能处理这个内容';
+      break;
     default:
       statusCode = 500;
       message = '服务暂时出了点问题';
