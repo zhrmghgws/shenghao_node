@@ -63,3 +63,12 @@ npm install jsonwebtoken@8.5.1
 npm install @types/jsonwebtoken@8.3.8 --save-dev
 
 #### 是用来根据制作的公私钥制作 token 令牌的
+
+## multer
+
+npm install multer@1.4.2
+npm install @types/multer@1.4.2 --save-dev
+
+#### 作用
+
+用于上传文件的框架

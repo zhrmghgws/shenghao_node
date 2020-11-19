@@ -24,7 +24,7 @@ export const authGuard = (
     });
 
     request.user = decoded as TokenPayload;
-
+    console.log('用户身份验证成功');
     next();
   } catch (error) {
     next(new Error('UNAUTHORIZED'));
@@ -56,7 +56,7 @@ interface AccessControlOptions {
 }
 export const accessControl = (options: AccessControlOptions) => {
   return async (request: Request, response: Response, next: NextFunction) => {
-    console.log('访问控制');
+    console.log('验证用户访问权');
     const { possession } = options;
     //这个中间件要放在authGuard的后面，因为要使用user
     const { id: userId } = request.user;
@@ -81,6 +81,7 @@ export const accessControl = (options: AccessControlOptions) => {
         return next(error);
       }
     }
+    console.log('用户拥有访问权');
     next();
   };
 };

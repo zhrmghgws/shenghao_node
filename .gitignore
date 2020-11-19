@@ -15,3 +15,4 @@ npm-debug.log*
 !.vscode/*.code-snippets
 .env*
 config/*.key
+/uploads
