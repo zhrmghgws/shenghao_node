@@ -72,6 +72,10 @@ export const defaultErrorHandler = (
       statusCode = 400;
       message = '您不能处理这个内容';
       break;
+    case 'FILE_NOT_FOUND':
+      statusCode = 400;
+      message = '文件不存在';
+      break;
     default:
       statusCode = 500;
       message = '服务暂时出了点问题';

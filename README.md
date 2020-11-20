@@ -72,3 +72,14 @@ npm install @types/multer@1.4.2 --save-dev
 #### 作用
 
 用于上传文件的框架
+
+## jimp
+
+npm install jimp@0.10.0
+
+####
+
+处理图片文件的
+使用时确保 tsconfig.json 中的下面两个选项设置为 true
+"allowSyntheticDefaultImports": true,
+"esModuleInterop": true,

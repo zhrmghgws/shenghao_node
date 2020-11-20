@@ -5,7 +5,7 @@
 			"/**",
 			" *  $1",
 			" */",
-			"export const ${2:NAME} = (",
+			"export const ${2:NAME} = async (",
 			"  request: Request,",
 			"  response: Response,",
 			"  next: NextFunction,",
