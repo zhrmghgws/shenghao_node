@@ -5,7 +5,13 @@ import {
   deletePostService,
   getPosts,
   updataPostService,
+  createPostTag,
+  postHasTag,
+  deletePostTag,
 } from './post.service';
+import { TagModel } from '../tag/tag.model';
+import { getTagByName, createTag } from '../tag/tag.service';
+
 export const index = (
   request: Request,
   response: Response,
@@ -84,6 +90,65 @@ export const deletePost = async (
   const { postId } = request.params;
   try {
     const data = await deletePostService(parseInt(postId, 10));
+    response.send(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ *  保存内容标签
+ */
+export const storePostTag = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  const { postId } = request.params;
+  const { name } = request.body;
+  let tag: TagModel;
+
+  try {
+    tag = await getTagByName(name);
+  } catch (error) {
+    return next(error);
+  }
+  if (tag) {
+    try {
+      const postTag = await postHasTag(parseInt(postId), tag.id);
+      if (postTag) return next(new Error('POST_ALREADY_HAS_THIS_TAG'));
+    } catch (error) {
+      return next(error);
+    }
+  }
+  if (!tag) {
+    try {
+      const data = await createTag({ name });
+      tag = { id: data.insertId };
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  try {
+    await createPostTag(parseInt(postId, 10), tag.id);
+    response.sendStatus(201);
+  } catch (error) {
+    next(error);
+  }
+};
+/**
+ *  移除内容标签
+ */
+export const destroyPostTag = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  const { postId } = request.params;
+  const { tagId } = request.body;
+  try {
+    const data = await deletePostTag(parseInt(postId, 10), tagId);
     response.send(data);
   } catch (error) {
     next(error);

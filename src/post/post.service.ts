@@ -1,3 +1,4 @@
+import { sqlFragment } from 'src/user/user.provider';
 import { connection } from '../app/database/mysql';
 import { PostModel } from './post.model';
 /**
@@ -9,13 +10,9 @@ export const getPosts = async () => {
   post.id,
   post.title,
   post.content,
-  JSON_OBJECT(
-    'id',user.id,
-    'name',user.name
-  ) as user
+  ${sqlFragment.user}
   FROM post
-  LEFT JOIN user
-    ON user.id =post.userId
+  ${sqlFragment.leftJoinUser}
   `;
   const [data] = await connection.promise().query(statement);
   return data;
@@ -56,5 +53,41 @@ export const deletePostService = async (postId: number) => {
     WHERE id=?
   `;
   const [data] = await connection.promise().query(statement, postId);
+  return data;
+};
+
+/**
+ *  保存内容标签
+ */
+export const createPostTag = async (postId: number, tagId: number) => {
+  const statement = `
+    INSERT INTO post_tag (postId,tagId)
+      VALUES(?,?)
+  `;
+  const [data] = await connection.promise().query(statement, [postId, tagId]);
+  return data;
+};
+
+/**
+ *  检测内容标签
+ */
+export const postHasTag = async (postId: number, tagId: number) => {
+  const statement = `
+    SELECT * FROM post_tag
+    WHERE postId=? AND tagId=?
+  `;
+  const [data] = await connection.promise().query(statement, [postId, tagId]);
+  return data[0] ? true : false;
+};
+
+/**
+ *  删除内容标签
+ */
+export const deletePostTag = async (postId: number, tagId: number) => {
+  const statement = `
+    DELETE FROM post_tag
+    WHERE postId =? AND tagId=?
+  `;
+  const [data] = await connection.promise().query(statement, [postId, tagId]);
   return data;
 };

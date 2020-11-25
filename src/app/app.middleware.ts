@@ -76,6 +76,18 @@ export const defaultErrorHandler = (
       statusCode = 400;
       message = '文件不存在';
       break;
+    case 'TAG_ALREADY_EXISTS':
+      statusCode = 400;
+      message = '标签已存在';
+      break;
+    case 'POST_ALREADY_HAS_THIS_TAG':
+      statusCode = 400;
+      message = '已经有了这个标签';
+      break;
+    case 'UNABLE_TO_REPLE_THIS_COMMENT':
+      statusCode = 400;
+      message = '这条评论已经有回复了';
+      break;
     default:
       statusCode = 500;
       message = '服务暂时出了点问题';
