@@ -1,20 +1,75 @@
-import { sqlFragment } from 'src/user/user.provider';
+import { sqlFragment } from '../user/user.provider';
 import { connection } from '../app/database/mysql';
 import { PostModel } from './post.model';
+
+/**
+ *  统计内容数量
+ */
+export const getPostsTotalCount = async (options: GetPostsOptions) => {
+  const { filter } = options;
+  let params = [filter.param];
+  const statement = `
+    SELECT COUNT(DISTINCT post.id) AS total
+    FROM post
+    ${sqlFragment.leftJoinUser}
+    ${sqlFragment.leftJoinOneFile}
+    ${sqlFragment.leftJoinTag}
+    WHERE ${filter.sql}
+  `;
+  const [data] = await connection.promise().query(statement, params);
+  return data[0].total;
+};
 /**
  * 获取内容列表
  */
-export const getPosts = async () => {
+export interface GetpostsOptionsPagination {
+  limit: number;
+  offset: number;
+}
+
+export interface GetPostsOptionsFilter {
+  name: string;
+  sql?: string;
+  param?: string;
+}
+
+interface GetPostsOptions {
+  sort?: string;
+  filter: GetPostsOptionsFilter;
+  pagination?: GetpostsOptionsPagination;
+}
+
+export const getPosts = async (options: GetPostsOptions) => {
+  const {
+    sort,
+    filter,
+    pagination: { limit, offset },
+  } = options;
+  let params: Array<any> = [limit, offset];
+  if (filter.param) {
+    params = [filter.param, ...params];
+  }
+
   const statement = `
   SELECT 
   post.id,
   post.title,
   post.content,
-  ${sqlFragment.user}
+  ${sqlFragment.user},
+  ${sqlFragment.totalComments},
+  ${sqlFragment.file},
+  ${sqlFragment.tags}
   FROM post
   ${sqlFragment.leftJoinUser}
+  ${sqlFragment.leftJoinOneFile}
+  ${sqlFragment.leftJoinTag}
+  WHERE ${filter.sql}
+  GROUP BY post.id 
+  ORDER BY ${sort}
+  LIMIT ?
+  OFFSET ?
   `;
-  const [data] = await connection.promise().query(statement);
+  const [data] = await connection.promise().query(statement, params);
   return data;
 };
 
