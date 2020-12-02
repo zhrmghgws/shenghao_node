@@ -4,7 +4,9 @@ import userRouter from '../user/user.router';
 import authRouter from '../auth/auth.router';
 import fileRouter from '../file/file.router';
 import tagRouter from '../tag/tag.router';
+import avatarRouter from '../avatar/avatar.router';
 import commentRouter from '../comment/comment.router';
+import likeRouter from '../like/like.router';
 import { defaultErrorHandler } from './app.middleware';
 
 const app = express();
@@ -17,6 +19,8 @@ app.use(
   fileRouter,
   tagRouter,
   commentRouter,
+  avatarRouter,
+  likeRouter,
 );
 app.use(defaultErrorHandler);
 

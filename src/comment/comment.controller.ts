@@ -96,3 +96,50 @@ export const destroy = async (
     next(error);
   }
 };
+
+/**
+ *  评论列表
+ */
+export const index = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const totalCount = await commentService.getCommentsTotalCount({
+      filter: request.filter,
+    });
+    response.header('X-Total-Count', totalCount);
+  } catch (error) {
+    next(error);
+  }
+
+  try {
+    const comments = await commentService.getComments({
+      filter: request.filter,
+      pagination: request.pagination,
+    });
+    response.send(comments);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ *  获取评论的回复列表
+ */
+export const indexReplies = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  const { commentId } = request.params;
+  try {
+    const replies = await commentService.getCommentReplies({
+      commentId: parseInt(commentId, 10),
+    });
+    response.send(replies);
+  } catch (error) {
+    next(error);
+  }
+};

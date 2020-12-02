@@ -1,22 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
-import { POSTS_PER_PAGE } from '../app/app.config';
 
 /**
  *  内容分页
  */
-export const paginate = async (
-  request: Request,
-  response: Response,
-  next: NextFunction,
-) => {
-  const { page = 1 } = request.query;
-  const limit = parseInt(POSTS_PER_PAGE, 10) || 30;
-  const offset = limit * (parseInt(page as string, 10) - 1);
-  request.pagination = {
-    limit: limit,
-    offset: offset,
+export const paginate = (itemPerPage: number) => {
+  return async (request: Request, response: Response, next: NextFunction) => {
+    const { page = 1 } = request.query;
+    const limit = itemPerPage || 30;
+    const offset = limit * (parseInt(page as string, 10) - 1);
+    request.pagination = {
+      limit: limit,
+      offset: offset,
+    };
+    next();
   };
-  next();
 };
 
 /**
@@ -74,6 +71,14 @@ export const filter = async (
     request.filter = {
       name: 'userPublished',
       sql: 'user.id=?',
+      param: user as string,
+    };
+  }
+  //过滤出用户赞过渡内容
+  if (user && action == 'like' && !tag) {
+    request.filter = {
+      name: 'userLiked',
+      sql: 'user_like_post.userId = ?',
       param: user as string,
     };
   }

@@ -32,18 +32,46 @@ interface GetUserOptions {
 /**
  * 按用户名查找用户
  */
-export const getUserByPhone = async (
-  phone: string,
-  options: GetUserOptions = {},
-) => {
-  const { password } = options;
-  const statement = `
-    SELECT id,
-    phone
+export const getUser = (condition: string) => {
+  return async (param: string | number, options: GetUserOptions = {}) => {
+    const { password } = options;
+    const statement = `
+    SELECT user.id,
+    user.name,
+    user.phone,
+    if(
+      count(avatar.id),1,null
+    ) as avatar
     ${password ? ', password' : ''}
     FROM user
-    WHERE phone=?
+    left join avatar on avatar.userId=user.id
+    where ${condition}=?
   `;
-  const [data] = await connection.promise().query(statement, phone);
-  return data[0];
+    const [data] = await connection.promise().query(statement, param);
+    return data[0].id ? data[0] : null;
+  };
+};
+
+/**
+ *  按手机号获取用户
+ */
+export const getUserByName = getUser('user.name');
+/**
+ * 按用户id获取用户数据
+ */
+export const getUserById = getUser('user.id');
+export const getUserByPhone = getUser('user.phone');
+
+/**
+ *  更新用户数据
+ */
+export const updateUser = async (userId: number, userData: UserModel) => {
+  const statement = `
+    update user 
+    set ?
+    where user.id = ?
+  `;
+  const params = [userData, userId];
+  const [data] = await connection.promise().query(statement, params);
+  return data;
 };

@@ -3,6 +3,7 @@ import * as postController from './post.controller';
 import { requestUrl } from '../app/app.middleware';
 import { authGuard, accessControl } from '../auth/auth.middleware';
 import { sortord, filter, paginate } from './post.middleware';
+import { POSTS_PER_PAGE } from '../app/app.config';
 const router = express.Router();
 
 /**
@@ -18,7 +19,7 @@ router.get(
   requestUrl,
   sortord,
   filter,
-  paginate,
+  paginate(POSTS_PER_PAGE),
   postController.posts,
 );
 
@@ -60,5 +61,7 @@ router.delete(
   accessControl({ possession: true }),
   postController.destroyPostTag,
 );
+
+router.get('/posts/:postId', postController.show);
 
 export default router;

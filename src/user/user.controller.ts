@@ -3,7 +3,6 @@ import { ResponseModle } from '../app/Response.Model';
 import * as userService from './user.service';
 import { signToken } from '../auth/auth.service';
 import _ from 'lodash';
-import { format } from 'mysql2';
 
 export const sendPhoneCode = async (
   request: Request,
@@ -63,6 +62,44 @@ export const updataUser = async (
   try {
     const data = await userService.upDataUserService(user);
     responst.send(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ *  用户账号
+ */
+export const show = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  const { userId } = request.params;
+  try {
+    const user = await userService.getUserById(parseInt(userId, 10));
+    if (!user) {
+      return next(new Error('USER_NOT_FOUND'));
+    }
+    response.send(user);
+  } catch (error) {
+    next(error);
+  }
+};
+/**
+ *  更新用户
+ */
+export const update = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  const { id } = request.user;
+  const userData = _.pick(request.body.update, ['name', 'password']);
+
+  try {
+    const data = await userService.updateUser(id, userData);
+    response.send(data);
   } catch (error) {
     next(error);
   }

@@ -64,6 +64,10 @@ export const defaultErrorHandler = (
       statusCode = 400;
       message = '密码不正确';
       break;
+    case 'PASSWORD_ID_THE_SAME':
+      statusCode = 400;
+      message = '新密码和旧密码不能一样';
+      break;
     case 'UNAUTHORIZED':
       statusCode = 401;
       message = '请先登录';
@@ -72,9 +76,21 @@ export const defaultErrorHandler = (
       statusCode = 400;
       message = '您不能处理这个内容';
       break;
+    case 'USER_NAME_ALREADY_EXIST':
+      statusCode = 400;
+      message = '用户名已存在';
+      break;
     case 'FILE_NOT_FOUND':
       statusCode = 400;
       message = '文件不存在';
+      break;
+    case 'NOT_FOUND':
+      statusCode = 400;
+      message = '文件不存在';
+      break;
+    case 'USER_NOT_FOUND':
+      statusCode = 400;
+      message = '用户不存在';
       break;
     case 'TAG_ALREADY_EXISTS':
       statusCode = 400;
@@ -87,6 +103,10 @@ export const defaultErrorHandler = (
     case 'UNABLE_TO_REPLE_THIS_COMMENT':
       statusCode = 400;
       message = '这条评论已经有回复了';
+      break;
+    case 'FILE_TYPE_NOT_ACCEPT':
+      statusCode = 400;
+      message = '不能上传此类型的文件';
       break;
     default:
       statusCode = 500;
